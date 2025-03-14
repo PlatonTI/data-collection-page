@@ -1,0 +1,27 @@
+name: Collect Data
+
+on:
+  repository_dispatch:
+    types: [data_collection]
+
+jobs:
+  log-data:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Log data
+      run: |
+        echo "Data collected: ${{ toJson(github.event.client_payload) }}" >> data.log
+
+    - name: Commit and push
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data.log
+        git commit -m "Log data: ${{ toJson(github.event.client_payload) }}"
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
