@@ -1,75 +1,97 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset=" UTF-8">
-    <meta name="viewport" content="width=device-width, initial scale=1.0">
-    <title>Собираем данные</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сбор данных пользователя</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .data {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Привет, это тестовая страница!</h1>
-    <p>Не Переходи по странны м ссылкам!</p>
-
-    <div id="user-data">
-        <h2>Ваши данные:</h2>
-        <ul Id="data-list">
-            <!-- Данные будут добавлены здесь -->
-        </ul>
-    </div>
+    <h1>Сбор данных пользователя</h1>
+    <div id="ip-address" class="data"></div>
+    <div id="os" class="data"></div>
+    <div id="browser" class="data"></div>
+    <div id="screen" class="data"></div>
+    <div id="language" class="data"></div>
+    <div id="timezone" class="data"></div>
+    <div id="cookies" class="data"></div>
 
     <script>
-        function collectData() {
-            const data = {
-                ip: 'unknown',
-                os: navigator.platform,
-                browser: navigator.userAgent,
-                screen: `${screen.width}x${screen.height}`,
-                language: navigator.language,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timezone
-            };
-
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(ipData => {
-                    data.ip = ipData.ip;
-                    displayData(data);
-                    sendData(data);
-                })
-                .catch(error => {
-                    console.error('Ошибка при получении IP:', error);
-                    displayData(data);
-                    sendData(data);
-                });
+        // Функция для получения IP-адреса
+        async function getIPAddress() {
+            const response = await fetch('https://api.ipify.org?format=json');
+            const data = await response.json();
+            document.getElementById('ip-address').innerText = `IP-адрес: ${data.ip}`;
         }
 
-        function displayData(data) {
-            const dataList = document.queryselector('#data-list');
-            const listItem = document.create element('li');
-            listItem.textContent = `IP: ${data.ip}, OS: ${data.os}, Browser: ${data.browser}, Screen: ${data.screen}, Language: ${data.language}, Timezone: ${data.timezone}`;
-            dataList.append child(listItem);
+        // Функция для определения операционной системы
+        function getOS() {
+            const userAgent = navigator.userAgent;
+            let os = 'Неизвестная ОС';
+
+            if (userAgent.indexOf("Win") !== -1) os = "Windows";
+            if (userAgent.indexOf("Mac") !== -1) os = "macOS";
+            if (userAgent.indexOf("Linux") !== -1) os = "Linux";
+            if (userAgent.indexOf("Android") !== -1) os = "Android";
+            if (userAgent.indexOf("like Mac") !== -1) os = "iOS";
+
+            document.getElementById('os').innerText = `Операционная система: ${os}`;
         }
 
-        function sendData(data) {
-            fetch('https://api.github.com/repos/your-username/data collection page/dispatches', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'token ' + 'PERSONAL_ACCESS_TOKEN'
-                },
-                body: JSON.stringify({
-                    event_type: 'data_collection',
-                    client_payload: data
-                })
-            })
-            .then(response => response.json()
-            .then(responseData => {
-                console.log('Данные отправлены:', responseData);
-            })
-            .catch(error => {
-                console.error('Ошибка при отправке данных:', error);
-            });
+        // Функция для определения браузера
+        function getBrowser() {
+            const userAgent = navigator.userAgent;
+            let browser = 'Неизвестный браузер';
+
+            if (userAgent.indexOf("Chrome") !== -1) browser = "Chrome";
+            if (userAgent.indexOf("Safari") !== -1) browser = "Safari";
+            if (userAgent.indexOf("Firefox") !== -1) browser = "Firefox";
+            if (userAgent.indexOf("MSIE") !== -1 || userAgent.indexOf("Trident/") !== -1) browser = "Internet Explorer";
+
+            document.getElementById('browser').innerText = `Браузер: ${browser}`;
         }
 
-        collectData();
+        // Функция для получения информации о экране
+        function getScreenInfo() {
+            const width = screen.width;
+            const height = screen.height;
+            document.getElementById('screen').innerText = `Разрешение экрана: ${width}x${height}`;
+        }
+
+        // Функция для получения языка браузера
+        function getLanguage() {
+            const language = navigator.language;
+            document.getElementById('language').innerText = `Язык браузера: ${language}`;
+        }
+
+        // Функция для получения часового пояса
+        function getTimezone() {
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.getElementById('timezone').innerText = `Часовой пояс: ${timezone}`;
+        }
+
+        // Функция для проверки поддержки кукис
+        function checkCookies() {
+            const cookiesEnabled = navigator.cookieEnabled;
+            document.getElementById('cookies').innerText = `Печеньки: ${cookiesEnabled ? 'Включены' : 'Выключены'}`;
+        }
+
+        // Вызов всех функций
+        getIPAddress();
+        getOS();
+        getBrowser();
+        getScreenInfo();
+        getLanguage();
+        getTimezone();
+        checkCookies();
     </script>
 </body>
 </html>
