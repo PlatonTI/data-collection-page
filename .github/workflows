@@ -24,4 +24,4 @@ jobs:
         git commit -m "Log data: ${{ toJson(github.event.client_payload) }}"
         git push
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.NFS_METKA }}
