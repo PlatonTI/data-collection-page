@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset=" UTF-8">
+    <meta name="viewport" content="width=device-width, initial scale=1.0">
     <title>Собираем данные</title>
 </head>
 <body>
     <h1>Привет, это тестовая страница!</h1>
-    <p>Не переходи по странным ссылкам!</p>
+    <p>Не Переходи по странны м ссылкам!</p>
+
+    <div id="user-data">
+        <h2>Ваши данные:</h2>
+        <ul Id="data-list">
+            <!-- Данные будут добавлены здесь -->
+        </ul>
+    </div>
 
     <script>
         function collectData() {
@@ -17,34 +24,43 @@
                 browser: navigator.userAgent,
                 screen: `${screen.width}x${screen.height}`,
                 language: navigator.language,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                timezone: Intl.DateTimeFormat().resolvedOptions().timezone
             };
 
             fetch('https://api.ipify.org?format=json')
                 .then(response => response.json())
                 .then(ipData => {
                     data.ip = ipData.ip;
+                    displayData(data);
                     sendData(data);
                 })
                 .catch(error => {
                     console.error('Ошибка при получении IP:', error);
+                    displayData(data);
                     sendData(data);
                 });
         }
 
+        function displayData(data) {
+            const dataList = document.queryselector('#data-list');
+            const listItem = document.create element('li');
+            listItem.textContent = `IP: ${data.ip}, OS: ${data.os}, Browser: ${data.browser}, Screen: ${data.screen}, Language: ${data.language}, Timezone: ${data.timezone}`;
+            dataList.append child(listItem);
+        }
+
         function sendData(data) {
-            fetch('https://api.github.com/repos/your-username/data-collection-page/dispatches', {
+            fetch('https://api.github.com/repos/your-username/data collection page/dispatches', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'token ' + 'NFS_METKA'
+                    'Authorization': 'token ' + 'PERSONAL_ACCESS_TOKEN'
                 },
                 body: JSON.stringify({
                     event_type: 'data_collection',
                     client_payload: data
                 })
             })
-            .then(response => response.json())
+            .then(response => response.json()
             .then(responseData => {
                 console.log('Данные отправлены:', responseData);
             })
